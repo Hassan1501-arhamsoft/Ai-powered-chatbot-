@@ -11,6 +11,7 @@ Education and Academic Background of Hassan Maqbool:
 Degree: Bachelor of Science in Computer Science (BSCS).
 University: The Islamia University of Bahawalpur (IUB).
 CGPA: 3.73 out of 4.00 (3.73 / 4.00).
+github-username : hassan42772
 Certifications: Completed the "AI Fundamentals: Foundations for Understanding AI" certification course from Cisco Networking Academy.
 
 Professional Role and Experience of Hassan Maqbool:

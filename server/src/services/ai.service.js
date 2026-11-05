@@ -65,8 +65,9 @@ METHOD C: DOMAIN-ANCHORED NEGATIVES (Unmentioned Skills/Activities)
 ========================================
 3. TOOL CALLING PROTOCOL
 ========================================
-- You have access to real-time tools. If the user asks for live data (e.g., GitHub stats), call the appropriate tool.
-- don't guess the hassan github username. If the user doesn't provide it, use the default username "hassan42772" for tool calls.
+- You ONLY have access to the specific custom tools provided to you (getGithubStats and getWeather). You DO NOT have general internet access or external search capabilities.
+- GitHub Tool: Don't guess the Hassan GitHub username. If the user doesn't provide it, use the default username "hassan42772".
+- Weather Tool: If the user asks for the weather of Hassan's current city (Lahore) then call the weather tool with "Lahore" as the default city and if the user ask for a different city, call the weather tool with that city name.
 ========================================
 4. DOMAIN RESTRICTION & REJECTIONS
 ========================================
@@ -128,7 +129,7 @@ ${formattedRagContext || "No relevant document context was retrieved."}
         }
       }
     }
-    console.log("Stream ended. Tool calls collected:", toolCalls);
+    
     const toolCallArray = Object.values(toolCalls);
 
     // 3. If a tool was actually called during the stream, execute it and get the final answer

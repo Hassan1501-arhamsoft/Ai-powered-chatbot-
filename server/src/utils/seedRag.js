@@ -36,7 +36,7 @@ async function seedKnowledge() {
 
     console.log("Generating semantic chunks using @johnhenry/semantic-chunker...");
 
-    // Initialize chunker utilizing your existing project embedder
+
     const chunker = semantic({
       embed: generateEmbedding,
       zScoreThreshold: 1.0, // Controls sensitivity (higher = larger chunks, lower = smaller chunks)

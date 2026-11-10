@@ -1,7 +1,7 @@
 // src/services/ai.service.js
 import "dotenv/config";
 import OpenAI from "openai";
-import { toolsConfig, executeTool } from "./tool.service.js";
+import { getToolsByRole, executeTool } from "./tool.service.js";
 
 // Initialize OpenAI client pointing to OpenRouter
 const openai = new OpenAI({
@@ -9,7 +9,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENROUTER_API_KEY,
 });
 
-export const askAI = async function* (messages, summary = "", ragContext = "", category = "", userQuery) {
+export const askAI = async function* (messages, summary = "", ragContext = "", category = "", userRole = "user") {
   const formattedRagContext = Array.isArray(ragContext)
     ? ragContext
         .map(
@@ -93,15 +93,22 @@ ${formattedRagContext || "No relevant document context was retrieved."}
 
   // Push historical messages (the last one is the current userQuery)
   apiMessages.push(...messages);
-
+  const allowedTools = getToolsByRole(userRole);
   // Define the streaming execution logic
   async function* processStream(currentMessages) {
-    const stream = await openai.chat.completions.create({
+
+    const payload = {
       model: "openrouter/free", 
       messages: currentMessages,
-      tools: toolsConfig,
       stream: true,
-    });
+    };
+
+    // 3. Only attach the tools array if the user actually has tools available
+    if (allowedTools.length > 0) {
+      payload.tools = allowedTools;
+    }
+
+    const stream = await openai.chat.completions.create(payload);
 
     let toolCalls = {};
 

@@ -10,18 +10,21 @@ export const getConversations = async () => {
   return response.data;
 };
 
-export const sendMessageStream = async ({ conversationId, message, category,onInit, onChunk, onError }) => {
+export const sendMessageStream = async ({ conversationId, message, category, onInit, onChunk, onError }) => {
   try {
     const response = await fetch("http://localhost:5000/api/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include", // CRITICAL: This sends the HTTP-Only JWT cookie with the fetch request
       body: JSON.stringify({ conversationId, message, category }),
     });
 
     if (!response.ok) {
-      throw new Error("I cannot fulfill this request due to safety and content moderation guidelines.");
+      // Let's capture the actual backend error message instead of a generic safety string
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || errorData.message || "Failed to connect to chat service.");
     }
 
     const reader = response.body.getReader();

@@ -83,7 +83,8 @@ export const generateEmbedding = async (text) => {
  */
 export const retrieveRelevantContext = async (
   queryText,
-  categoryFilter = "portfolio_data"
+  categoryFilter = "portfolio_data",
+  userRole = "user"
 ) => {
   if (typeof queryText !== "string" || !queryText.trim()) {
     throw new Error("The retrieval query must be a non-empty string.");
@@ -95,6 +96,13 @@ export const retrieveRelevantContext = async (
 
   const queryVector = await generateEmbedding(queryText);
 
+  const vectorSecurityFilter = {
+    "metadata.category": { $eq: categoryFilter }
+  };
+  
+  if (userRole !== "admin") {
+    vectorSecurityFilter["metadata.visibility"] = { $eq: "public" }; // Strict restriction
+  }
   // 1. Run Vector Search and Text Search in parallel
   const [vectorResults, textResults] = await Promise.all([
     Knowledge.aggregate([
@@ -104,12 +112,8 @@ export const retrieveRelevantContext = async (
           path: "embedding",
           queryVector,
           numCandidates: NUM_CANDIDATES,
-          filter: {
-            "metadata.category": {
-              $eq: categoryFilter,
-            },
-          },
-          limit: VECTOR_LIMIT, // FIXED: Now using the dedicated VECTOR_LIMIT
+          filter: vectorSecurityFilter, 
+          limit: VECTOR_LIMIT,
         },
       },
       {
@@ -131,7 +135,9 @@ export const retrieveRelevantContext = async (
         },
       },
       {
-        $match: { "metadata.category": categoryFilter },
+        $match: userRole === "admin" 
+          ? { "metadata.category": categoryFilter }
+          : { "metadata.category": categoryFilter, "metadata.visibility": "public" }
       },
       { $limit: VECTOR_LIMIT }, // FIXED: Match text search limit to vector search limit for balanced RRF
       {

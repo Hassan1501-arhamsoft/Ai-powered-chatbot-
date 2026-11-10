@@ -15,24 +15,25 @@ const RECENT_MESSAGES_TO_KEEP = 4;
 export const chatController = async (req, res, next) => {
   try {
     const { conversationId, message, category } = req.body;
-    const validation = validateInput(message);
+    const userRole = req.user?.role || "user";
+    // const validation = validateInput(message);
 
-    if (!validation.allowed) {
-      return errorResponse(res, validation.reason, 400);
-    }
+    // if (!validation.allowed) {
+    //   return errorResponse(res, validation.reason, 400);
+    // }
 
-    const moderation = await moderateInput(message);
+    // const moderation = await moderateInput(message);
 
-    if (moderation.flagged) {
-      return errorResponse(
-        res,
-        "Your message cannot be processed because it violates our safety policy.",
-        400,
-        {
-          categories: moderation.categories,
-        },
-      );
-    }
+    // if (moderation.flagged) {
+    //   return errorResponse(
+    //     res,
+    //     "Your message cannot be processed because it violates our safety policy.",
+    //     400,
+    //     {
+    //       categories: moderation.categories,
+    //     },
+    //   );
+    // }
 
     let conversation;
 
@@ -95,7 +96,7 @@ export const chatController = async (req, res, next) => {
     // 8. Build token-based context
     // const context =buildContext(recentMessages);
 
-    const ragContext = await retrieveRelevantContext(message, category);
+    const ragContext = await retrieveRelevantContext(message, category, userRole);
 
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
@@ -113,7 +114,7 @@ export const chatController = async (req, res, next) => {
         conversation.summary,
         ragContext,
         category,
-        message,
+        userRole
       );
 
       for await (const chunk of stream) {

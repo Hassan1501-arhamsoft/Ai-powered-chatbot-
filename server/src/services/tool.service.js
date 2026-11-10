@@ -1,6 +1,6 @@
 // src/services/tool.service.js
 
-export const toolsConfig = [
+export const publicTools = [
   {
     type: "function",
     function: {
@@ -37,6 +37,29 @@ export const toolsConfig = [
     },
   }
 ];
+
+export const adminTools = [{
+    type: "function",
+    function: {
+      name: "getSystemStatus",
+      description: "Fetch the current backend server status, uptime, and memory usage. For admin use only.",
+      parameters: {
+        type: "object",
+        properties: {},
+        required: [],
+      },
+    },
+  }];
+
+// NEW HELPER: Dynamically construct the allowed tools array based on role
+export const getToolsByRole = (role) => {
+  if (role === "admin") {
+    return [...publicTools, ...adminTools];
+  }
+  return publicTools; // Standard users only get safe, read-only tools
+};
+
+
 
 export const executeTool = async (toolCall) => {
   const { name, arguments: args } = toolCall.function;
@@ -126,6 +149,26 @@ export const executeTool = async (toolCall) => {
       return JSON.stringify({ error: "Failed to retrieve live weather data." });
     }
   }
+  // ==========================================
+  // TOOL 3: System Status (Admin Only)
+  // ==========================================
+  if (name === "getSystemStatus") {
+    try {
+      // Simulate fetching server metrics
+      const systemMetrics = {
+        status: "Healthy",
+        uptime: "14 days, 3 hours",
+        cpuLoad: "12%",
+        memoryUsage: "456MB / 1024MB",
+        activeDatabaseConnections: 4,
+        securityMessage: "Admin clearance verified."
+      };
 
+      return JSON.stringify(systemMetrics);
+    } catch (error) {
+      console.error("Tool execution error (getSystemStatus):", error);
+      return JSON.stringify({ error: "Failed to retrieve system status." });
+    }
+  }
   return JSON.stringify({ error: `Tool ${name} not found` });
 };

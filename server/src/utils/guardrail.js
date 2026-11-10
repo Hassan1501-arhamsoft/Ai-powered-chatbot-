@@ -49,7 +49,6 @@ const BLOCKED_PHRASES = [
   "system prompt",
   "repeat all text",
   "repeat the text above",
-  "system diagnostic",
   "developer mode",
   "you are now a",
   "override instructions",

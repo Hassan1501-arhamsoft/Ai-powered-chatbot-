@@ -9,10 +9,16 @@ const app = express();
 app.use(cookieParser());
 
 app.use(helmet());
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+const allowedOrigin = (process.env.CLIENT_URL || "http://localhost:5173").replace(/\/$/, "");
+app.use(
+    cors({
+        origin: allowedOrigin,
+        credentials: true,
+    })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use("/api/chat" , chatRoutes );
+app.use("/api/chat", chatRoutes);
 app.use("/api/conversations", conversationRoutes);
 app.use("/api/auth", authRoutes);
 

@@ -9,10 +9,9 @@ const app = express();
 app.use(cookieParser());
 
 app.use(helmet());
-const allowedOrigin = (process.env.CLIENT_URL || "http://localhost:5173").replace(/\/$/, "");
 app.use(
     cors({
-        origin: allowedOrigin,
+        origin: "http://localhost:5173",
         credentials: true,
     })
 );

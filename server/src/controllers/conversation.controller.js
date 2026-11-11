@@ -66,3 +66,30 @@ export const getConversation = async (req, res, next) => {
     next(error);
   }
 };
+
+//~ ==========================================
+//^ Delete conversation and its messages
+//~ ==========================================
+
+export const deleteConversation = async (req, res, next) => {
+  try {
+    const { conversationId } = req.params;
+
+    const conversation = await Conversation.findByIdAndDelete(conversationId);
+
+    if (!conversation) {
+      return errorResponse(res, "Conversation not found", 404);
+    }
+
+    await Message.deleteMany({ conversationId });
+
+    return successResponse(
+      res,
+      "Conversation deleted successfully",
+      { id: conversationId },
+      200
+    );
+  } catch (error) {
+    next(error);
+  }
+};

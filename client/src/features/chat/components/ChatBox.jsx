@@ -6,6 +6,7 @@ import {
   sendMessageStream,
   getConversation,
   getConversations,
+  deleteConversation,
 } from "../services/chat.service";
 
 // ─── Avatar initials ──────────────────────────────────────────────────────────
@@ -291,6 +292,19 @@ function ChatBox() {
     setSidebarOpen(false);
   };
 
+  /* ── Delete conversation ── */
+  const handleDeleteConversation = async (idToDelete) => {
+    try {
+      await deleteConversation(idToDelete);
+      setConversations((prev) => prev.filter((c) => c._id !== idToDelete));
+      if (conversationId === idToDelete) {
+        handleNewChat();
+      }
+    } catch (error) {
+      console.error("Failed to delete conversation:", error);
+    }
+  };
+
   /* ── Sidebar content (shared between desktop & mobile) ── */
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
@@ -340,25 +354,45 @@ function ChatBox() {
             {conversations.map((conv) => {
               const isActive = conversationId === conv._id;
               return (
-                <button
+                <div
                   key={conv._id}
-                  onClick={() => handleSelectConversation(conv._id)}
                   className={`
-                    group w-full flex items-center gap-2.5 rounded-xl px-3 py-2.5
-                    text-left text-sm transition-all duration-150
+                    group w-full flex items-center justify-between gap-1.5 rounded-xl px-2.5 py-1.5
+                    transition-all duration-150
                     ${isActive
                       ? "bg-indigo-50 text-indigo-700 font-medium"
                       : "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900"
                     }
                   `}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg"
-                    className={`h-3.5 w-3.5 flex-shrink-0 ${isActive ? "text-indigo-500" : "text-slate-400 group-hover:text-slate-600"}`}
-                    viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd" />
-                  </svg>
-                  <span className="truncate">{conv.title}</span>
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSelectConversation(conv._id)}
+                    className="flex items-center gap-2.5 flex-1 min-w-0 text-left py-1 outline-none cursor-pointer"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                      className={`h-3.5 w-3.5 flex-shrink-0 ${isActive ? "text-indigo-500" : "text-slate-400 group-hover:text-slate-600"}`}
+                      viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd" />
+                    </svg>
+                    <span className="truncate text-sm">{conv.title}</span>
+                  </button>
+
+                  {/* Delete icon button beside conversation title */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteConversation(conv._id);
+                    }}
+                    title="Delete conversation"
+                    className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50/80 transition-all flex-shrink-0 cursor-pointer"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
               );
             })}
           </div>

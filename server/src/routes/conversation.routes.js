@@ -3,6 +3,7 @@ import express from "express";
 import {
   getConversations,
   getConversation,
+  deleteConversation,
 } from "../controllers/conversation.controller.js";
 import { protect } from "../middlewares/auth.middleware.js";
 
@@ -22,6 +23,12 @@ router.get("/", getConversations);
 //~ ==========================================
 
 router.get("/:conversationId", getConversation);
+
+//~ ==========================================
+//^ Delete single conversation
+//~ ==========================================
+
+router.delete("/:conversationId", deleteConversation);
 
 
 export default router;

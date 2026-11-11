@@ -10,6 +10,11 @@ export const getConversations = async () => {
   return response.data;
 };
 
+export const deleteConversation = async (conversationId) => {
+  const response = await api.delete(`/conversations/${conversationId}`);
+  return response.data;
+};
+
 export const sendMessageStream = async ({ conversationId, message, category, onInit, onChunk, onError }) => {
   try {
     const response = await fetch("http://localhost:5000/api/chat", {

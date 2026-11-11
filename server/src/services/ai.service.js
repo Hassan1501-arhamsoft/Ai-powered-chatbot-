@@ -15,12 +15,7 @@ const openai = new OpenAI({
 export const askAI = async function* (messages, summary = "", ragContext = "", category = "", userRole = "user") {
   const formattedRagContext = Array.isArray(ragContext)
     ? ragContext
-      .map(
-        (item, index) =>
-          `[Document ${index + 1}]\n` +
-          `Source: ${item.source ?? "Unknown"}\n` +
-          `Content:\n${item.content}`
-      )
+      .map((item) => item.content)
       .join("\n\n")
     : ragContext;
 

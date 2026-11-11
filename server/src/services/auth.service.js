@@ -9,7 +9,10 @@ const generateToken = (user) => {
 };
 
 export const registerUser = async (userData) => {
-  const { name, email, password, role } = userData;
+  const { name, email, password } = userData;
+  // NOTE: 'role' is intentionally excluded from destructuring.
+  // Role assignment from the client is a critical security vulnerability.
+  // All new registrations are always "user". Promote to "admin" via DB only.
 
   const userExists = await User.findOne({ email });
   if (userExists) {
@@ -23,7 +26,7 @@ export const registerUser = async (userData) => {
     name,
     email,
     password: hashedPassword,
-    role,
+    // role defaults to "user" per schema — never accept from client
   });
 
   const token = generateToken(user);

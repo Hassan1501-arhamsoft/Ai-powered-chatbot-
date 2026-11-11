@@ -2,7 +2,14 @@ import app from "./app.js";
 import http from "http";
 import dotenv from "dotenv";
 import {connectDB} from "./configs/db.js";
+import dns from "node:dns";
+import net from "node:net";
 
+// Force Node.js to use IPv4 to fix the Xenova/HuggingFace fetch error
+dns.setDefaultResultOrder("ipv4first");  
+if (net.setDefaultAutoSelectFamily) {
+  net.setDefaultAutoSelectFamily(false);
+}
 dotenv.config();
 await connectDB();
 

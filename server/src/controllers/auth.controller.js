@@ -50,3 +50,8 @@ export const logout = (req, res) => {
   });
   return successResponse(res, null, "Logged out successfully");
 };
+
+// Returns the currently authenticated user (used on page refresh to restore auth state)
+export const getMe = (req, res) => {
+  return successResponse(res, "User fetched successfully", req.user);
+};

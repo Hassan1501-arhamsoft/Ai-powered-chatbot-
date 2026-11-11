@@ -40,29 +40,35 @@ Return only the updated summary.
 `;
 
 
-  const response = await fetch(
-    "https://openrouter.ai/api/v1/chat/completions",
-    {
-      method: "POST",
+  const isGemini = Boolean(process.env.GEMINI_API_KEY);
+  const endpoint = isGemini
+    ? "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
+    : "https://openrouter.ai/api/v1/chat/completions";
 
-      headers: {
-        "Content-Type": "application/json",
-        Authorization:
-          `Bearer ${process.env.OPENROUTER_API_KEY}`,
-      },
+  const apiKey = isGemini
+    ? process.env.GEMINI_API_KEY
+    : process.env.OPENROUTER_API_KEY;
 
-      body: JSON.stringify({
-        model: "openrouter/free",
+  const model = isGemini
+    ? (process.env.GEMINI_MODEL || "gemini-3.5-flash-lite")
+    : "openrouter/free";
 
-        messages: [
-          {
-            role: "user",
-            content: summaryPrompt,
-          },
-        ],
-      }),
-    }
-  );
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model,
+      messages: [
+        {
+          role: "user",
+          content: summaryPrompt,
+        },
+      ],
+    }),
+  });
 
 
   const data = await response.json();

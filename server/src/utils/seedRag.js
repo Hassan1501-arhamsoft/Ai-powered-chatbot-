@@ -54,6 +54,8 @@ async function seedKnowledge() {
       if (embedding.length !== 384) {
         throw new Error(`Unexpected embedding dimensions: ${embedding.length}`);
       }
+      const isSecret = chunkContent.includes("[SECRET]");
+      const visibility = isSecret ? "private" : "public";
 
       documents.push({
         content: chunkContent,
@@ -62,6 +64,7 @@ async function seedKnowledge() {
           source: path.basename(TXT_FILE),
           category: "portfolio_data",
           chunkIndex,
+          visibility  
         },
       });
       chunkIndex++;

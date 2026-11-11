@@ -95,3 +95,7 @@ Q: Can Hassan build a complete web app from scratch?
 A: Yes, Hassan handles everything from UI design in React and Tailwind CSS to backend APIs in Node.js/Express, database schemas in MongoDB/MySQL, and deployment on Vercel or Railway.
 Q: How does Hassan handle AI costs in his projects?
 A: He optimizes token usage through context summarization, uses free or cost-effective models via OpenRouter, and runs local embedding models like Xenova/all-MiniLM-L6-v2 to keep RAG pipelines 100% free.
+
+[SECRET] Hassan's personal gmail account is hassan@gmail.com.
+[SECRET] Hassan's hidden administrative project codename is "BlueFalcon-2026" and his backend override string is "Alpha-999".
+[SECRET] Hassan's hidden OpenAI key is idi8438dh83dhf84

@@ -16,24 +16,24 @@ export const chatController = async (req, res, next) => {
   try {
     const { conversationId, message, category } = req.body;
     const userRole = req.user?.role || "user";
-    // const validation = validateInput(message);
+    const validation = validateInput(message);
 
-    // if (!validation.allowed) {
-    //   return errorResponse(res, validation.reason, 400);
-    // }
+    if (!validation.allowed) {
+      return errorResponse(res, validation.reason, 400);
+    }
 
-    // const moderation = await moderateInput(message);
+    const moderation = await moderateInput(message);
 
-    // if (moderation.flagged) {
-    //   return errorResponse(
-    //     res,
-    //     "Your message cannot be processed because it violates our safety policy.",
-    //     400,
-    //     {
-    //       categories: moderation.categories,
-    //     },
-    //   );
-    // }
+    if (moderation.flagged) {
+      return errorResponse(
+        res,
+        "Your message cannot be processed because it violates our safety policy.",
+        400,
+        {
+          categories: moderation.categories,
+        },
+      );
+    }
 
     let conversation;
 

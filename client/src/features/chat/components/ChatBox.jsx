@@ -23,6 +23,19 @@ function ChatBox() {
 
   const isStreaming = useRef(false);
   const { logout, user } = useAuth();
+const handleLogout = async () => {
+    // 1. Clear from browser storage
+    localStorage.removeItem("conversationId");
+    
+    // 2. Reset local component states
+    setConversationId(null);
+    setSelectedCategory(null);
+    // If you have a messages state, clear that too: setMessages([]);
+    
+    // 3. Trigger the backend logout and clear the user context
+    await logout();
+  };
+
   useEffect(() => {
     const loadConversations = async () => {
       try {
@@ -218,7 +231,7 @@ useEffect(() => {
             <span className="text-xs text-slate-500 truncate">{user?.email}</span>
           </div>
           <button
-            onClick={logout}
+            onClick={handleLogout}
             className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-600 transition-colors hover:bg-red-50 hover:text-red-600 flex-shrink-0"
             title="Log out"
           >
